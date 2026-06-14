@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Date ❤️</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+font-family:Poppins,sans-serif;
+min-height:100vh;
+background:linear-gradient(135deg,#dff6ff,#ffe8f3);
+display:flex;
+justify-content:center;
+align-items:flex-start;
+padding:25px 0;
+overflow-x:hidden;
+}
+.card{
+width:92%;
+max-width:550px;
+background:rgba(255,255,255,.55);
+backdrop-filter:blur(12px);
+padding:24px;
+border-radius:24px;
+text-align:center;
+box-shadow:0 10px 30px rgba(0,0,0,.12);
+}
+h1{color:#ff4d88;margin-bottom:15px}
+.gif{
+height:220px;
+border-radius:16px;
+background-size:cover;
+background-position:center;
+margin:15px 0;
+}
+.waiting{background-image:url('https://media1.tenor.com/m/UAFrdZCt29YAAAAC/milk-and-mocha-waiting-for-reply.gif')}
+.happy{background-image:url('https://media1.tenor.com/m/2VprHA868S8AAAAC/yummy-desserts-desserts-milk-mocha.gif')}
+.buttons{
+height:120px;
+position:relative;
+display:flex;
+justify-content:center;
+align-items:center;
+gap:20px;
+}
+.btn,.option{
+border:none;
+border-radius:12px;
+padding:12px 22px;
+cursor:pointer;
+font-weight:600;
+}
+.yes,.confirm{background:#ff4d88;color:white}
+.no{background:white}
+.screen{display:none}
+.active{display:block}
+.options{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+margin:15px 0;
+}
+.option.selected{
+background:#ff4d88;
+color:white;
+}
+.date-label{
+display:block;
+width:100%;
+padding:16px;
+margin-top:15px;
+border-radius:14px;
+background:#fff;
+border:2px dashed #ff4d88;
+color:#ff4d88;
+font-weight:600;
+cursor:pointer;
+}
+#datePicker{
+width:100%;
+padding:14px;
+margin-top:10px;
+border-radius:12px;
+border:1px solid #ddd;
+}
+.summary{
+margin-top:15px;
+padding:12px;
+background:#fff;
+border-radius:12px;
+}
+@media(max-width:600px){
+.options{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+
+<div id="screen1" class="active">
+<h1>Will you go on a date with me? ❤️</h1>
+<div class="gif waiting"></div>
+
+<div class="buttons" id="buttonArea">
+<button class="btn yes" id="yesBtn">Yes!!! 😍</button>
+<button class="btn no" id="noBtn">No 😏</button>
+</div>
+</div>
+
+<div id="screen2" class="screen">
+<h1>Yayyyyy!!! 🥹❤️</h1>
+<div class="gif happy"></div>
+
+<h3>What sounds fun?</h3>
+
+<div class="options">
+<button class="option" data-v="Kadhi-Chawal Date ☕">☕ Kadhai Date</button>
+<button class="option" data-v="Momos Date 🍕">🍕 Food Date</button>
+<button class="option" data-v="Sunset Walk 🌅">🌅 Sunset Walk</button>
+<button class="option" data-v="Movie Date 🎬">🎬 Movie Date</button>
+<button class="option" data-v="Cat Date 🐱">🐱 Cat Date</button>
+</div>
+
+<label for="datePicker" class="date-label">
+📅 Tap here to choose our date ❤️
+</label>
+
+<input type="date" id="datePicker">
+
+<button class="btn confirm" id="confirmBtn" style="margin-top:12px;width:100%;">
+Confirm & Open WhatsApp ❤️
+</button>
+
+<div class="summary" id="summary">
+Choose an activity and date ✨
+</div>
+
+</div>
+</div>
+
+<script>
+const yesBtn=document.getElementById('yesBtn');
+const noBtn=document.getElementById('noBtn');
+const area=document.getElementById('buttonArea');
+
+yesBtn.onclick=()=>{
+document.getElementById('screen1').className='screen';
+document.getElementById('screen2').className='active';
+};
+
+function moveNo(){
+const maxX=area.clientWidth-noBtn.offsetWidth;
+const maxY=area.clientHeight-noBtn.offsetHeight;
+
+noBtn.style.position='absolute';
+noBtn.style.left=Math.random()*maxX+'px';
+noBtn.style.top=Math.random()*maxY+'px';
+}
+
+noBtn.addEventListener('mouseenter',moveNo);
+noBtn.addEventListener('click',moveNo);
+
+let selected='';
+const summary=document.getElementById('summary');
+const datePicker=document.getElementById('datePicker');
+const dateLabel=document.querySelector('.date-label');
+
+document.querySelectorAll('.option').forEach(btn=>{
+btn.onclick=()=>{
+document.querySelectorAll('.option').forEach(b=>b.classList.remove('selected'));
+btn.classList.add('selected');
+selected=btn.dataset.v;
+updateSummary();
+};
+});
+
+datePicker.min=new Date().toISOString().split('T')[0];
+
+datePicker.addEventListener('change',()=>{
+const d=new Date(datePicker.value).toLocaleDateString('en-IN',{
+day:'numeric',month:'long',year:'numeric'
+});
+
+dateLabel.innerHTML='📅 Selected: '+d+' ❤️';
+updateSummary();
+});
+
+function updateSummary(){
+if(selected && datePicker.value){
+const d=new Date(datePicker.value).toLocaleDateString('en-IN',{
+day:'numeric',month:'long',year:'numeric'
+});
+
+summary.innerHTML='<b>'+selected+'</b><br>❤️ '+d;
+}
+}
+
+document.getElementById('confirmBtn').onclick=()=>{
+if(!selected){alert('Pick a date type ❤️');return;}
+if(!datePicker.value){alert('Pick a date ❤️');return;}
+
+const d=new Date(datePicker.value).toLocaleDateString('en-IN',{
+day:'numeric',month:'long',year:'numeric'
+});
+
+const msg=`I picked:
+
+${selected}
+
+Date:
+${d} ❤️`;
+
+location.href='https://wa.me/918126249146?text='+encodeURIComponent(msg);
+};
+</script>
+
+</body>
+</html>
